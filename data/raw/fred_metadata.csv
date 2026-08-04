@@ -1,0 +1,7 @@
+series_id,variable,description,source,url,raw_file,downloaded_at
+CBBTCUSD,btc_price,Coinbase Bitcoin price in U.S. dollars,"FRED, Federal Reserve Bank of St. Louis",https://fred.stlouisfed.org/graph/fredgraph.csv?id=CBBTCUSD,data/raw/CBBTCUSD.csv,2026-05-25 13:14:28 CEST
+SP500,sp500,S&P 500 index,"FRED, Federal Reserve Bank of St. Louis",https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500,data/raw/SP500.csv,2026-05-25 13:14:28 CEST
+NASDAQCOM,nasdaq,Nasdaq Composite index,"FRED, Federal Reserve Bank of St. Louis",https://fred.stlouisfed.org/graph/fredgraph.csv?id=NASDAQCOM,data/raw/NASDAQCOM.csv,2026-05-25 13:14:28 CEST
+VIXCLS,vix,CBOE Volatility Index: VIX,"FRED, Federal Reserve Bank of St. Louis",https://fred.stlouisfed.org/graph/fredgraph.csv?id=VIXCLS,data/raw/VIXCLS.csv,2026-05-25 13:14:28 CEST
+DGS10,dgs10,10-year U.S. Treasury constant maturity yield,"FRED, Federal Reserve Bank of St. Louis",https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10,data/raw/DGS10.csv,2026-05-25 13:14:28 CEST
+DTWEXBGS,dollar_index,Nominal broad U.S. dollar index,"FRED, Federal Reserve Bank of St. Louis",https://fred.stlouisfed.org/graph/fredgraph.csv?id=DTWEXBGS,data/raw/DTWEXBGS.csv,2026-05-25 13:14:28 CEST

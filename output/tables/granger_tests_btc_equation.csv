@@ -1,0 +1,4 @@
+null_hypothesis,lags,f_statistic,p_value
+sp500_return does not Granger-cause btc_return,1,0.48996774521865283,0.48401142351516413
+vix_change does not Granger-cause btc_return,1,0.4598868661519869,0.49774404668225514
+dgs10_change does not Granger-cause btc_return,1,1.0607316444202066,0.3031550413730365

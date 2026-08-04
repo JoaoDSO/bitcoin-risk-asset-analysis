@@ -1,0 +1,22 @@
+Type: Project
+Title: Bitcoin Risk-Asset Analysis
+Version: 0.1.0
+Authors@R: person("Joao", "Oliveira", role = c("aut", "cre"))
+Description: Reproducible Financial Econometrics project analysing Bitcoin return dynamics, volatility clustering, and relationships with equity-market, uncertainty, interest-rate, and dollar-index variables.
+License: MIT
+Encoding: UTF-8
+Depends:
+    R (>= 4.2.0)
+Imports:
+    dplyr,
+    FinTS,
+    forecast,
+    ggplot2,
+    knitr,
+    lubridate,
+    purrr,
+    readr,
+    tibble,
+    tidyr,
+    tseries,
+    vars

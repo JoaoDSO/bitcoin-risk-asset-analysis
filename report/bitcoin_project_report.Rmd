@@ -1,0 +1,206 @@
+---
+title: "Does Bitcoin Behave Like a Risky Financial Asset?"
+author: "Joao"
+date: "`r format(Sys.Date(), '%Y-%m-%d')`"
+output:
+  pdf_document:
+    number_sections: true
+    toc: false
+  html_document:
+    toc: false
+fontsize: 11pt
+geometry: margin=1in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(readr)
+library(dplyr)
+library(knitr)
+
+if (basename(getwd()) == "report") {
+  setwd("..")
+}
+
+fmt <- function(x, digits = 3) {
+  ifelse(is.na(x), NA, round(x, digits))
+}
+```
+
+# Introduction and Background
+
+Bitcoin has developed from a niche payment technology into a large traded financial asset. A central empirical question is whether its return dynamics resemble those of a risky speculative asset: high volatility, heavy tails, volatility clustering, and short-run co-movement with broader financial markets. This project therefore asks:
+
+**Does Bitcoin behave like a risky financial asset, and do equity-market, uncertainty, and interest-rate shocks help explain Bitcoin returns?**
+
+The question is relevant because Bitcoin is often discussed both as an alternative currency and as a portfolio asset. Previous studies have debated whether Bitcoin behaves more like a medium of exchange, a speculative asset, or a diversifier. For example, Dyhrberg (2016) studies Bitcoin through volatility models, Baur, Hong and Lee (2018) discuss whether Bitcoin is mainly a medium of exchange or speculative asset, and Corbet et al. (2018) analyze links between cryptocurrencies and other financial assets. In this short project, the focus is empirical rather than a full literature review: I use time-series tools from the course to study Bitcoin's mean dynamics, volatility, and relationship with traditional market variables.
+
+The hypotheses are:
+
+1. Bitcoin returns have weak predictable mean dynamics but clear conditional heteroskedasticity.
+2. Bitcoin is contemporaneously related to equity-market and uncertainty conditions.
+3. Lagged equity, VIX, and interest-rate changes have limited predictive power for Bitcoin returns.
+
+# Data
+
+The data are daily observations downloaded from FRED, Federal Reserve Bank of St. Louis. The core series are Coinbase Bitcoin prices in U.S. dollars (`CBBTCUSD`), the S&P 500 index (`SP500`), the CBOE VIX index (`VIXCLS`), and the 10-year U.S. Treasury yield (`DGS10`). Nasdaq and the broad U.S. dollar index are also downloaded for descriptive checks. Bitcoin trades every day, while the other variables are business-day series. Therefore, the empirical sample keeps common dates where all core variables are observed.
+
+```{r sample-info}
+sample_info <- read_csv("output/tables/sample_info.csv", show_col_types = FALSE)
+kable(sample_info, digits = 3, caption = "Sample Information")
+```
+
+The variables used in the models are transformed as follows:
+
+\[
+r^{BTC}_t = 100\Delta \log(P^{BTC}_t), \quad
+r^{SP500}_t = 100\Delta \log(P^{SP500}_t),
+\]
+
+\[
+\Delta VIX_t = VIX_t - VIX_{t-1}, \quad
+\Delta i_t = DGS10_t - DGS10_{t-1}.
+\]
+
+The log-return transformation is standard for financial prices because prices are usually non-stationary while returns are closer to stationary. VIX and Treasury yields are used in first differences because the project is interested in short-run market shocks rather than long-run levels.
+
+```{r summary-statistics}
+summary_stats <- read_csv("output/tables/summary_statistics.csv", show_col_types = FALSE)
+core_stats <- summary_stats %>%
+  filter(variable %in% c("btc_return", "sp500_return", "vix_change", "dgs10_change")) %>%
+  mutate(across(where(is.numeric), ~round(.x, 3)))
+kable(core_stats, caption = "Summary Statistics")
+```
+
+Bitcoin returns are much more volatile than S&P 500 returns. Over the sample, the daily standard deviation of Bitcoin returns is `r fmt(core_stats$sd[core_stats$variable == "btc_return"])` percent, compared with `r fmt(core_stats$sd[core_stats$variable == "sp500_return"])` percent for the S&P 500. Bitcoin also displays negative skewness and high excess kurtosis, which is consistent with large downside movements and fat tails.
+
+```{r indexed-prices, out.width='100%', fig.cap='Indexed Bitcoin, S&P 500, and Nasdaq Prices'}
+knitr::include_graphics("output/figures/indexed_prices.png")
+```
+
+```{r rolling-volatility, out.width='100%', fig.cap='Rolling Annualized Volatility'}
+knitr::include_graphics("output/figures/rolling_volatility.png")
+```
+
+The figures show that Bitcoin has experienced much larger boom-bust cycles than broad equity indices. The rolling volatility plot also confirms that Bitcoin volatility is persistently above equity volatility and changes over time, which motivates a conditional volatility model.
+
+# Methodology
+
+The first model family is ARIMA/GARCH. I model Bitcoin returns as
+
+\[
+\phi(L)(r^{BTC}_t-\mu) = \theta(L)\varepsilon_t,
+\]
+
+where \(\phi(L)\) and \(\theta(L)\) are autoregressive and moving-average lag polynomials. The ARIMA model describes the conditional mean and gives a simple forecasting benchmark. Since financial returns often have time-varying variance, I then estimate a GARCH(1,1) model for the residual variance:
+
+\[
+\varepsilon_t = \sigma_t z_t, \quad z_t \sim iid(0,1),
+\]
+
+\[
+\sigma_t^2 = \omega + \alpha \varepsilon_{t-1}^2 + \beta \sigma_{t-1}^2.
+\]
+
+Here \(\alpha\) measures the immediate impact of return shocks on volatility, while \(\beta\) measures volatility persistence. This model is appropriate because Bitcoin returns have large volatility clusters.
+
+The second model family is a vector autoregression. The VAR contains S&P 500 returns, VIX changes, 10-year Treasury yield changes, and Bitcoin returns:
+
+\[
+y_t = c + A_1 y_{t-1} + u_t,
+\]
+
+where
+
+\[
+y_t = (r^{SP500}_t,\Delta VIX_t,\Delta i_t,r^{BTC}_t)'.
+\]
+
+The lag length is selected using information criteria. I use Granger causality tests to evaluate whether lagged traditional financial variables improve prediction of Bitcoin returns, and impulse response functions to trace the response of Bitcoin returns to market shocks.
+
+# Results
+
+```{r unit-root-tests}
+unit_root_tests <- read_csv("output/tables/unit_root_tests.csv", show_col_types = FALSE) %>%
+  mutate(across(where(is.numeric), ~round(.x, 3)))
+kable(unit_root_tests, caption = "ADF and KPSS Unit-Root Tests")
+```
+
+The unit-root tests support transforming the price-level variables. For log Bitcoin and log S&P 500 prices, the ADF tests do not reject a unit root, while the KPSS tests reject level stationarity. For the transformed variables, the ADF tests reject a unit root and KPSS tests do not reject stationarity. This supports estimating the ARIMA/GARCH and VAR models on returns and first differences.
+
+```{r arima-results}
+arima_accuracy <- read_csv("output/tables/arima_forecast_accuracy.csv", show_col_types = FALSE) %>%
+  mutate(across(where(is.numeric), ~round(.x, 3)))
+arima_diagnostics <- read_csv("output/tables/arima_diagnostics.csv", show_col_types = FALSE) %>%
+  mutate(across(where(is.numeric), ~round(.x, 4)))
+kable(arima_accuracy, caption = "ARIMA Forecast Accuracy")
+kable(arima_diagnostics, caption = "ARIMA Diagnostic Tests")
+```
+
+Automatic ARIMA selection chooses an ARIMA(2,0,2) model with non-zero mean for Bitcoin returns. The Ljung-Box test on residuals has a p-value of `r fmt(arima_diagnostics$p_value[1], 3)`, so there is no strong remaining autocorrelation in the mean equation. However, the ARCH test has a p-value below 1 percent, meaning that the residuals still contain conditional heteroskedasticity. This is exactly the pattern often found in financial returns: the conditional mean is difficult to forecast, but the conditional variance is predictable.
+
+```{r garch-results}
+garch_coefficients <- read_csv("output/tables/garch_coefficients.csv", show_col_types = FALSE) %>%
+  mutate(across(where(is.numeric), ~round(.x, 4)))
+kable(garch_coefficients, caption = "GARCH(1,1) Coefficients")
+```
+
+The GARCH(1,1) estimates are positive and statistically significant in the model summary. The ARCH coefficient is approximately `r fmt(garch_coefficients$estimate[garch_coefficients$coefficient == "a1"], 3)`, and the GARCH coefficient is approximately `r fmt(garch_coefficients$estimate[garch_coefficients$coefficient == "b1"], 3)`. Their sum is about `r fmt(sum(garch_coefficients$estimate[garch_coefficients$coefficient %in% c("a1", "b1")]), 3)`, indicating persistent volatility. This supports the first hypothesis: Bitcoin behaves like a risky financial asset with strong volatility clustering.
+
+```{r arima-forecast-figure, out.width='100%', fig.cap='ARIMA Forecasts for the Test Sample'}
+knitr::include_graphics("output/figures/arima_forecast_test_sample.png")
+```
+
+The forecast plot shows that the conditional mean forecasts remain close to zero and that realized returns are mostly unpredictable within wide intervals. The forecast exercise therefore reinforces the idea that Bitcoin's mean return is hard to forecast, even though its volatility is highly time-varying.
+
+```{r correlation-table}
+correlation_table <- read_csv("output/tables/correlation_matrix.csv", show_col_types = FALSE) %>%
+  mutate(across(where(is.numeric), ~round(.x, 3)))
+kable(correlation_table, caption = "Correlation Matrix")
+```
+
+Bitcoin has a positive contemporaneous correlation with S&P 500 returns of about `r fmt(correlation_table$btc_return[correlation_table$variable == "sp500_return"], 3)` and a negative correlation with VIX changes of about `r fmt(correlation_table$btc_return[correlation_table$variable == "vix_change"], 3)`. This means Bitcoin tends to rise on equity-positive days and fall when market uncertainty rises. That is more consistent with risky-asset behavior than with safe-haven behavior.
+
+```{r var-info}
+var_info <- read_csv("output/tables/var_model_info.csv", show_col_types = FALSE)
+kable(var_info, caption = "VAR Specification")
+```
+
+```{r granger-tests}
+granger_tests <- read_csv("output/tables/granger_tests_btc_equation.csv", show_col_types = FALSE) %>%
+  mutate(across(where(is.numeric), ~round(.x, 3)))
+kable(granger_tests, caption = "Granger Causality Tests for the Bitcoin Equation")
+```
+
+The Schwarz criterion selects one lag for the VAR. In the Bitcoin equation, none of the lagged traditional financial variables significantly Granger-causes Bitcoin returns at conventional levels. The p-values for lagged S&P 500 returns, VIX changes, and Treasury yield changes are all above 10 percent. This supports the third hypothesis: while Bitcoin is contemporaneously related to market conditions, lagged market variables do not provide strong short-run predictive content for Bitcoin returns.
+
+```{r irf-sp500, out.width='100%', fig.cap='Bitcoin Response to an S&P 500 Return Shock'}
+knitr::include_graphics("output/figures/irf_sp500_return_to_btc.png")
+```
+
+```{r irf-vix, out.width='100%', fig.cap='Bitcoin Response to a VIX Shock'}
+knitr::include_graphics("output/figures/irf_vix_change_to_btc.png")
+```
+
+```{r irf-rates, out.width='100%', fig.cap='Bitcoin Response to a 10-Year Yield Shock'}
+knitr::include_graphics("output/figures/irf_dgs10_change_to_btc.png")
+```
+
+The impulse response functions show an immediate positive response of Bitcoin returns to an S&P 500 shock and an immediate negative response to a VIX shock. These effects decay quickly and are not persistent over later horizons. The response to a Treasury-yield shock is weaker and statistically less clear. Because the impulse responses are orthogonalized, the ordering matters; I place equity returns and VIX before Bitcoin to interpret them as broader market shocks hitting Bitcoin within the day.
+
+# Conclusion
+
+The evidence suggests that Bitcoin behaves more like a risky financial asset than a currency or safe haven. Bitcoin returns are far more volatile than S&P 500 returns, have fat tails, and display strong conditional heteroskedasticity. The ARIMA model removes most mean autocorrelation, but the ARCH test and GARCH estimates show that volatility clustering is economically and statistically important.
+
+The VAR results add a second perspective. Bitcoin is positively correlated with equity returns and negatively correlated with VIX changes, suggesting risk-on/risk-off behavior. However, lagged S&P 500 returns, VIX changes, and Treasury yield changes do not significantly Granger-cause Bitcoin returns in the Bitcoin equation. Thus, Bitcoin appears connected to broader market conditions contemporaneously, but its next-day mean returns remain difficult to forecast from these traditional variables.
+
+Overall, the project supports the view that Bitcoin is best understood as a highly volatile speculative asset with weak predictable mean dynamics and persistent volatility. A limitation is that the analysis uses a relatively compact VAR and daily data. Future work could compare subsamples, include dollar-index or liquidity variables, or estimate a multivariate volatility model.
+
+# References
+
+Baur, D. G., Hong, K., and Lee, A. D. (2018). Bitcoin: Medium of exchange or speculative assets? *Journal of International Financial Markets, Institutions and Money*, 54, 177-189.
+
+Corbet, S., Meegan, A., Larkin, C., Lucey, B., and Yarovaya, L. (2018). Exploring the dynamic relationships between cryptocurrencies and other financial assets. *Economics Letters*, 165, 28-34.
+
+Dyhrberg, A. H. (2016). Bitcoin, gold and the dollar: A GARCH volatility analysis. *Finance Research Letters*, 16, 85-92.
+

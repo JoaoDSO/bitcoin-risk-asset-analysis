@@ -1,0 +1,4 @@
+item,value
+selected_lag,1
+lag_selection_rule,"Schwarz information criterion, SC(n)"
+variable_order_for_orthogonalized_irfs,"sp500_return, vix_change, dgs10_change, btc_return"

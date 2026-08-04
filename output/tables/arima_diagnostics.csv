@@ -1,0 +1,3 @@
+test,statistic,p_value
+Ljung-Box residual autocorrelation,15.38271888954223,0.7541055946514166
+ARCH effects in ARIMA residuals,34.62196076057196,5.378059977393917e-4

@@ -1,0 +1,4 @@
+cause,test,statistic,p_value
+sp500_return,VAR system Granger causality,1.6020006146813877,0.18664386836059965
+vix_change,VAR system Granger causality,3.0393483596206554,0.027811895331447123
+dgs10_change,VAR system Granger causality,1.3911045497442511,0.2434190054789772

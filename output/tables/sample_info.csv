@@ -1,0 +1,5 @@
+item,value
+sample_start,2017-01-04
+sample_end,2026-05-21
+observations,2341
+core_business_day_series,"btc_return, sp500_return, vix_change, dgs10_change"

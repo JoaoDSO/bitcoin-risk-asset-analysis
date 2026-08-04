@@ -1,0 +1,105 @@
+
+VAR Estimation Results:
+========================= 
+Endogenous variables: sp500_return, vix_change, dgs10_change, btc_return 
+Deterministic variables: const 
+Sample size: 2340 
+Log Likelihood: -10593.59 
+Roots of the characteristic polynomial:
+0.1962 0.04433 0.04433 0.01295
+Call:
+vars::VAR(y = var_matrix, p = selected_lag, type = "const")
+
+
+Estimation results for equation sp500_return: 
+============================================= 
+sp500_return = sp500_return.l1 + vix_change.l1 + dgs10_change.l1 + btc_return.l1 + const 
+
+                 Estimate Std. Error t value Pr(>|t|)   
+sp500_return.l1 -0.086011   0.033298  -2.583  0.00985 **
+vix_change.l1    0.045483   0.019365   2.349  0.01892 * 
+dgs10_change.l1 -0.644060   0.446110  -1.444  0.14895   
+btc_return.l1    0.009800   0.005711   1.716  0.08630 . 
+const            0.053810   0.023971   2.245  0.02487 * 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+
+Residual standard error: 1.155 on 2335 degrees of freedom
+Multiple R-Squared: 0.02472,	Adjusted R-squared: 0.02305 
+F-statistic:  14.8 on 4 and 2335 DF,  p-value: 6.052e-12 
+
+
+Estimation results for equation vix_change: 
+=========================================== 
+vix_change = sp500_return.l1 + vix_change.l1 + dgs10_change.l1 + btc_return.l1 + const 
+
+                 Estimate Std. Error t value Pr(>|t|)    
+sp500_return.l1  0.115744   0.057114   2.027   0.0428 *  
+vix_change.l1   -0.139079   0.033216  -4.187 2.93e-05 ***
+dgs10_change.l1  0.303497   0.765192   0.397   0.6917    
+btc_return.l1   -0.010667   0.009796  -1.089   0.2763    
+const           -0.001824   0.041116  -0.044   0.9646    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+
+Residual standard error: 1.982 on 2335 degrees of freedom
+Multiple R-Squared: 0.03725,	Adjusted R-squared: 0.0356 
+F-statistic: 22.58 on 4 and 2335 DF,  p-value: < 2.2e-16 
+
+
+Estimation results for equation dgs10_change: 
+============================================= 
+dgs10_change = sp500_return.l1 + vix_change.l1 + dgs10_change.l1 + btc_return.l1 + const 
+
+                  Estimate Std. Error t value Pr(>|t|)  
+sp500_return.l1 -0.0015986  0.0015532  -1.029   0.3035  
+vix_change.l1    0.0015188  0.0009033   1.681   0.0928 .
+dgs10_change.l1  0.0083607  0.0208093   0.402   0.6879  
+btc_return.l1    0.0003385  0.0002664   1.271   0.2040  
+const            0.0009099  0.0011181   0.814   0.4158  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+
+Residual standard error: 0.0539 on 2335 degrees of freedom
+Multiple R-Squared: 0.006923,	Adjusted R-squared: 0.005222 
+F-statistic:  4.07 on 4 and 2335 DF,  p-value: 0.002727 
+
+
+Estimation results for equation btc_return: 
+=========================================== 
+btc_return = sp500_return.l1 + vix_change.l1 + dgs10_change.l1 + btc_return.l1 + const 
+
+                Estimate Std. Error t value Pr(>|t|)  
+sp500_return.l1 -0.08721    0.12459  -0.700   0.4840  
+vix_change.l1   -0.04914    0.07246  -0.678   0.4977  
+dgs10_change.l1 -1.71920    1.66926  -1.030   0.3032  
+btc_return.l1   -0.03953    0.02137  -1.850   0.0645 .
+const            0.19406    0.08969   2.164   0.0306 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+
+Residual standard error: 4.324 on 2335 degrees of freedom
+Multiple R-Squared: 0.002244,	Adjusted R-squared: 0.0005343 
+F-statistic: 1.313 on 4 and 2335 DF,  p-value: 0.2629 
+
+
+
+Covariance matrix of residuals:
+             sp500_return vix_change dgs10_change btc_return
+sp500_return     1.335175   -1.79280    6.594e-03  1.187e+00
+vix_change      -1.792803    3.92821   -1.206e-02 -2.140e+00
+dgs10_change     0.006594   -0.01206    2.905e-03 -3.666e-05
+btc_return       1.186900   -2.13991   -3.666e-05  1.869e+01
+
+Correlation matrix of residuals:
+             sp500_return vix_change dgs10_change btc_return
+sp500_return       1.0000    -0.7828    0.1058820  0.2375720
+vix_change        -0.7828     1.0000   -0.1129296 -0.2497173
+dgs10_change       0.1059    -0.1129    1.0000000 -0.0001573
+btc_return         0.2376    -0.2497   -0.0001573  1.0000000
+
+

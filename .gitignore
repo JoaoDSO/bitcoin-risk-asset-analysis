@@ -1,0 +1,36 @@
+# R session files
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+*.Rproj
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary and cache files
+*.tmp
+*.temp
+*.log
+__pycache__/
+.pytest_cache/
+
+# Archives and duplicated submission bundles
+*.zip
+overleaf/
+overleaf_upload/
+example_previews/
+report/rendered_pages/
+report/*.docx
+report/build_docx_report.py
+report/build_word_report.ps1
+
+# Local environments
+renv/library/
+renv/staging/
+.venv/
+venv/
+
+# Keep generated project outputs visible for reviewers, but ignore common local clutter.

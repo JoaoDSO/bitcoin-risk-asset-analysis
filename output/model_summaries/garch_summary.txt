@@ -1,0 +1,31 @@
+
+Call:
+tseries::garch(x = garch_input, order = c(1, 1), trace = FALSE)
+
+Model:
+GARCH(1,1)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-9.30484 -0.45961 -0.00762  0.45706  5.93596 
+
+Coefficient(s):
+    Estimate  Std. Error  t value Pr(>|t|)    
+a0  1.461521    0.150243    9.728   <2e-16 ***
+a1  0.102173    0.006502   15.714   <2e-16 ***
+b1  0.831100    0.012483   66.581   <2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Diagnostic Tests:
+	Jarque Bera Test
+
+data:  Residuals
+X-squared = 4772.9, df = 2, p-value < 2.2e-16
+
+
+	Box-Ljung test
+
+data:  Squared.Residuals
+X-squared = 0.68024, df = 1, p-value = 0.4095
+
