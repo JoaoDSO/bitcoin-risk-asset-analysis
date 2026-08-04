@@ -68,7 +68,6 @@ The saved project outputs use a sample from 2017-01-04 to 2026-05-21 with 2,341 
 |   |-- bitcoin_project_report.Rmd
 |   `-- bitcoin_project_report.pdf
 |-- DESCRIPTION
-|-- LICENSE
 `-- README.md
 ```
 
@@ -104,7 +103,3 @@ Possible extensions include subsample analysis, additional liquidity or macro-fi
 ## Contribution And AI Use
 
 This repository is based on a Financial Econometrics academic project completed during my MSc studies. The public GitHub version was organized and documented with AI assistance. The repository is presented as evidence of applied econometrics, data handling, and reproducible analytical workflow, without claiming production-level software engineering or independent research impact.
-
-## License
-
-The code and documentation are released under the MIT License. The data are sourced from FRED, Federal Reserve Bank of St. Louis, and remain subject to the terms of the original data provider.
